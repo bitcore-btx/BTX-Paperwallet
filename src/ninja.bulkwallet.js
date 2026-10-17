@@ -31,6 +31,8 @@
 			bulk.csvRowsRemaining = rowLimit;
 			bulk.csvStartIndex = --startIndex;
 			bulk.compressedAddrs = !!compressedAddrs;
+			var segwitEl = document.getElementById("bulksegwit");
+			bulk.segwit = (segwitEl != null && segwitEl.checked && !bulk.encrypt);
 			if (bulk.encrypt) {
 				if (passphrase == "") {
 					alert(translator.get("bip38alertpassphraserequired"));
@@ -74,8 +76,10 @@
 				else {
 					var key = new Bitcoin.ECKey(false);
 					key.setCompressed(bulk.compressedAddrs);
+					// when the segwit checkbox is on (and BIP38 encryption off), emit btx1... addresses
+					var address = bulk.segwit ? key.getBech32Address() : key.getBitcoinAddress();
 					bulk.csv.push((bulk.csvRowLimit - bulk.csvRowsRemaining + bulk.csvStartIndex)
-										+ ",\"" + key.getBitcoinAddress() + "\",\"" + key.toString("wif")
+										+ ",\"" + address + "\",\"" + key.toString("wif")
 										//+	"\",\"" + key.toString("wifcomp")    // uncomment these lines to add different private key formats to the CSV
 										//+ "\",\"" + key.getBitcoinHexFormat() 
 										//+ "\",\"" + key.toString("base64") 
@@ -109,6 +113,14 @@
 			// enable/disable passphrase textbox
 			document.getElementById("bulkpassphrase").disabled = !element.checked;
 			bulk.encrypt = element.checked;
+			// BIP38 encrypts to a base58 (legacy) address - the BIP38 addresshash is
+			// defined over the base58 address string, so segwit CSV rows cannot be
+			// BIP38-encrypted: disable the segwit option while encrypting.
+			var segwitEl = document.getElementById("bulksegwit");
+			if (segwitEl != null) {
+				segwitEl.checked = false;
+				segwitEl.disabled = element.checked;
+			}
 		}
 	};
 })(ninja.wallets, ninja.translator, ninja.privateKey);

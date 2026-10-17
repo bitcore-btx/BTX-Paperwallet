@@ -3,6 +3,8 @@
 		currentCulture: "en",
 
 		autoDetectTranslation: function () {
+			// Default language is English; browser language detection overrides it
+			// when a supported language is recognized.
 			// window.navigator.language for Firefox / Chrome / Opera Safari
 			// window.navigator.userLanguage for IE
 			var language = window.navigator.language || window.navigator.userLanguage;
@@ -53,22 +55,22 @@
 			"en": {
 				// javascript alerts or messages
 				"testneteditionactivated": "TESTNET EDITION ACTIVATED",
-				"paperlabelbitcoinaddress": "Bitcoin Address:",
+				"paperlabelbitcoinaddress": "Bitcore BTX Address:",
 				"paperlabelprivatekey": "Private Key:",
 				"paperlabelencryptedkey": "Encrypted Private Key (Password required)",
 				"bulkgeneratingaddresses": "Generating addresses... ",
 				"brainalertpassphrasetooshort": "The passphrase you entered is too short.\n\n",
-				"brainalertpassphrasewarning": "Warning: Choosing a strong passphrase is important to avoid brute force attempts to guess your passphrase and steal your bitcoins.",
+				"brainalertpassphrasewarning": "Warning: Choosing a strong passphrase is important to avoid brute force attempts to guess your passphrase and steal your BTX.",
 				"brainalertpassphrasedoesnotmatch": "The passphrase does not match the confirm passphrase.",
 				"detailalertnotvalidprivatekey": "The text you entered is not a valid Private Key",
-				"detailconfirmsha256": "The text you entered is not a valid Private Key!\n\nWould you like to use the entered text as a passphrase and create a Private Key using a SHA256 hash of the passphrase?\n\nWarning: Choosing a strong passphrase is important to avoid brute force attempts to guess your passphrase and steal your bitcoins.",
+				"detailconfirmsha256": "The text you entered is not a valid Private Key!\n\nWould you like to use the entered text as a passphrase and create a Private Key using a SHA256 hash of the passphrase?\n\nWarning: Choosing a strong passphrase is important to avoid brute force attempts to guess your passphrase and steal your BTX.",
 				"detailbip38decryptbutton": "Decrypt BIP38", //TODO: please translate
 				"detailbip38encryptbutton": "Encrypt BIP38", //TODO: please translate
 				"bip38alertincorrectpassphrase": "Incorrect passphrase for this encrypted private key.",
 				"bip38alertpassphraserequired": "Passphrase required for BIP38 key",
 				"vanityinvalidinputcouldnotcombinekeys": "Invalid input. Could not combine keys.",
 				"vanityalertinvalidinputpublickeysmatch": "Invalid input. The Public Key of both entries match. You must input two different keys.",
-				"vanityalertinvalidinputcannotmultiple": "Invalid input. Cannot multiply two public keys. Select 'Add' to add two public keys to get a bitcoin address.",
+				"vanityalertinvalidinputcannotmultiple": "Invalid input. Cannot multiply two public keys. Select 'Add' to add two public keys to get a Bitcore BTX address.",
 				"vanityprivatekeyonlyavailable": "Only available when combining two private keys",
 				"vanityalertinvalidinputprivatekeysmatch": "Invalid input. The Private Key of both entries match. You must input two different keys.",
 

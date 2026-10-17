@@ -1,13 +1,46 @@
-bitaddress.org 
-Open Source JavaScript Client-Side Bitcoin Wallet Generator
+bitcore.cc 
+Bitcore BTX Paper Wallet - a fork of bitaddress.org v3.3.0
 
-The bitaddress.org file contains all the JavaScript/Css/Images embedded
+bitcore.cc is the Bitcore BTX edition of the bitaddress.org paper wallet.
+All crypto source files are byte-identical to bitaddress.org v3.3.0; only
+visible text/strings were rebranded (Bitcoin -> Bitcore BTX) and the dead
+Bitcoin explorers were replaced with chainz.cryptoid.info/btx.
+The original MIT license of bitaddress.org/pointbiz is preserved unchanged.
+Note: the bitaddress.org name and logo are NOT part of the MIT license,
+so this fork is branded bitcore.cc.
+
+The bitcore.cc HTML file contains all the JavaScript/Css/Images embedded
 in the HTML document. Included in the file name is the file's version 
 number and hash.
 
-The bitaddress.org software is available Open Source under the MIT License.
-Visit the GitHub Repository for the full copyright and license information:
+The bitcore.cc software is available Open Source under the MIT License
+(copyright bitaddress.org / pointbiz). Upstream repository:
 https://github.com/pointbiz/bitaddress.org
+Fork: https://github.com/bitcore-btx/BTX-Paperwallet
+
+bitcore.cc Paper Wallet 3.4.0 (2026-10-16)
+
+New features:
+- SegWit (P2WPKH, btx1...) addresses in Single, Bulk, Paper and Brain Wallet.
+- "Skip randomness" button: finish mouse seeding immediately using the
+  browser's built-in CSPRNG (no entropy source removed).
+
+Changes:
+- Default language English; browser language auto-detected when supported.
+- Header logo links to https://bitcore.cc (new tab).
+- Bulk Wallet commands in an invisible table; buttons "1. Generate"/"2. Print".
+- Paper wallet artwork rebranded (Bitcore logos, wordmark, microprint,
+  watermark) for both the normal and BIP38 (encrypted) templates.
+- Footer: translator donation Bitcoin addresses replaced with a
+  "Donations & original site: click here" link to https://bitaddress.org
+  in all languages.
+- Fixed dead GitHub archive zip links; fixed German FAQ placeholder
+  (BITCOINADRESSE -> DIEADRESSEHIN); fixed misleading "sweep at chainz"
+  tip (chainz is an explorer only).
+- Release signing: new PGP key A0F4 B209 4270 2E78
+  (fingerprint E5478242B619D47A41F0345CA0F4B20942702E78,
+  info@bitcore.cc), public key in bitcore-paperwallet-public.asc.
+
 
 Bitcoin Forum thread:
 https://bitcointalk.org/index.php?topic=43496.0
@@ -24,6 +57,16 @@ END USER NOTES:
  5) BIP38 most likely will not work on mobile devices due to hardware limitations.
 
 Here is a signed list of file names and version history.
+
+2026-10-14: status ACTIVE
+bitcore.cc-v1.0.0-SHA256-24a7a2dcfa7c8927f5a6f46a18fbad65b4cf96c725b8d359775a723665785672.html
+ - bitcore.cc Bitcore BTX fork of bitaddress.org v3.3.0 (crypto sources unchanged)
+ - rebrand visible text: Bitcoin -> Bitcore BTX, title/logo bitcore.cc
+ - dead BTC explorers replaced with chainz.cryptoid.info/btx
+ - fix decodeString rejecting BTX version byte 0x03
+ - BTX unit-test vectors (Bech32 HRP 'btx', btx1q...); 76/76 unit tests pass
+ - no network calls (no XHR/fetch/WebSocket), no eval
+ - signed release file + hash published by bitcore.cc maintainers
 
 2016-12-23: status ACTIVE
 bitaddress.org-v3.3.0-SHA256-dec17c07685e1870960903d8f58090475b25af946fe95a734f88408cef4aa194.html

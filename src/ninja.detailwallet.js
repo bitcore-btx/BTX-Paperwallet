@@ -180,6 +180,8 @@
 				document.getElementById("detailpubkeycomp").innerHTML = btcKey.getPubKeyHex();
 				document.getElementById("detailaddresscomp").innerHTML = bitcoinAddressComp;
 				document.getElementById("detailprivwifcomp").innerHTML = wifComp;
+				// native SegWit (P2WPKH) address for the same key (btx1...)
+				document.getElementById("detailaddresssegwit").innerHTML = btcKey.getBech32Address();
 				btcKey.setCompressed(originalCompression); // to satisfy the key pool
 				var pool1 = new Bitcoin.ECKey(wif); // to satisfy the key pool
 				var pool2 = new Bitcoin.ECKey(wifComp); // to satisfy the key pool

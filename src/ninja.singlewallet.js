@@ -20,7 +20,8 @@
 			try {
 				var key = new Bitcoin.ECKey(false);
 				key.setCompressed(true);
-				var bitcoinAddress = key.getBitcoinAddress();
+				single.lastKey = key;
+				var bitcoinAddress = single.getAddressForCurrentFormat();
 				var privateKeyWif = key.getBitcoinWalletImportFormat();
 				document.getElementById("btcaddress").innerHTML = bitcoinAddress;
 				document.getElementById("btcprivwif").innerHTML = privateKeyWif;
@@ -38,6 +39,33 @@
 				document.getElementById("qrcode_public").innerHTML = "";
 				document.getElementById("qrcode_private").innerHTML = "";
 			}
+		},
+
+		// the key currently displayed (kept so toggling the address format does NOT
+		// generate a new key - the same key funds both the legacy and the segwit address)
+		lastKey: null,
+
+		segwitSelected: function () {
+			var el = document.getElementById("singlesegwit");
+			return el != null && el.checked;
+		},
+
+		getAddressForCurrentFormat: function () {
+			if (single.segwitSelected()) {
+				return single.lastKey.getBech32Address();
+			}
+			return single.lastKey.getBitcoinAddress();
+		},
+
+		// checkbox handler: re-render the address + public QR for the SAME key
+		toggleSegwit: function () {
+			if (single.lastKey == null) return;
+			var bitcoinAddress = single.getAddressForCurrentFormat();
+			document.getElementById("btcaddress").innerHTML = bitcoinAddress;
+			qrCode.showQrCode({
+				"qrcode_public": bitcoinAddress,
+				"qrcode_private": document.getElementById("btcprivwif").innerHTML
+			}, 4);
 		}
 	};
 })(ninja.wallets, ninja.qrCode);

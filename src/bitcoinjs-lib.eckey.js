@@ -217,6 +217,24 @@ Bitcoin.ECKey = (function () {
 	};
 
 	/*
+	* Native SegWit (P2WPKH) address: bech32 over the hash160 of the COMPRESSED public key
+	* with witness version 0 and HRP "btx" (BIP-141/BIP-173 with the BTX HRP).
+	* Verified against the official BitCore node (LIMXTEC/BitCore src/key_io.cpp:
+	* WitnessV0KeyHash -> ConvertBits<8,5,true> + bech32::Encode(bech32_hrp="btx");
+	* SegWit is ALWAYS_ACTIVE in chainparams.cpp). P2WPKH always uses the compressed
+	* pubkey regardless of this.compressed, so the base58 address of this key is
+	* unaffected. Returns null if encoding fails.
+	*/
+	ECKey.prototype.getBech32Address = function () {
+		var wasCompressed = this.compressed;
+		this.setCompressed(true);
+		var hash = this.getPubKeyHash();
+		this.setCompressed(wasCompressed);
+		var data = [0].concat(Bitcoin.Bech32.convertBits(hash, 8, 5, true));
+		return Bitcoin.Bech32.encode(Bitcoin.Address.bech32Hrp, data);
+	};
+
+	/*
 	* Takes a public point as a hex string or byte array
 	*/
 	ECKey.prototype.setPub = function (pub) {

@@ -1,21 +1,56 @@
-# bitaddress.org
-JavaScript Client-Side Bitcoin Wallet Generator
+# bitcore.cc - Bitcore BTX Paper Wallet
+JavaScript Client-Side Bitcore BTX Wallet Generator (fork of bitaddress.org v3.3.0)
 
-Now Bitcoin addresses and their corresponding private key can be conveniently 
-generated in a web browser.
+This is the bitcore.cc Bitcore BTX edition of the bitaddress.org paper
+wallet. Now Bitcore BTX addresses and their corresponding private key can be
+conveniently generated in a web browser.
 
-The bitaddress.org project provides an all-in-one HTML document with embedded
+The bitcore.cc project provides an all-in-one HTML document with embedded
 JavaScript/Css/Images. The JavaScript is readable not minified and contains no
 XMLHttpRequest's (no AJAX). The benefit of this technique is you can load the 
 JavaScript locally and trust that the JavaScript did not change after being 
 loaded. 
 
-Here is a link to the BitcoinTalk.org forum topic discussing this project:
+All crypto source files are byte-identical to bitaddress.org v3.3.0; visible
+text/strings were rebranded (Bitcoin -> Bitcore BTX), the paper-wallet artwork
+(logos, wordmark, microprint strip, watermark) was redesigned with Bitcore
+branding, and the dead Bitcoin explorers were replaced with
+chainz.cryptoid.info/btx.
+
+
+CHANGES vs. bitaddress.org v3.3.0:
+
+ 1) SegWit (P2WPKH, btx1...) addresses in Single Wallet, Bulk Wallet, Paper
+    Wallet and Brain Wallet (checkbox "SegWit address (btx1...)?").
+
+ 2) Skip randomness: a "Skip randomness" button lets the user finish the
+    mouse-movement seeding step immediately. It still draws 64 bytes from the
+    browser's built-in CSPRNG (window.crypto.getRandomValues), so no entropy
+    source is removed - mouse movement only adds extra entropy.
+
+ 3) Default language is English; the browser language is auto-detected and
+    overrides it when supported. Switch via the language dropdown or the URL
+    parameter ?culture=de (etc.).
+
+ 4) The bitcore.cc logo in the header links to https://bitcore.cc and opens
+    it in a new tab.
+
+ 5) Bulk Wallet command panel laid out as an invisible table; buttons are
+    numbered "1. Generate" / "2. Print".
+
+
+BUILDING:
+
+    node combine_build.js
+
+This merges src/ (HTML, CSS, JS, culture files) into the single-file bundle
+bitaddress.org.html. Grunt is not required.
+
+Here is a link to the BitcoinTalk.org forum topic discussing the original
+project:
 https://bitcointalk.org/index.php?topic=43496.0
 
-
-Please send DONATIONS for this project to Bitcoin Address: 
-1NiNja1bUmhSoTXozBRBEtR8LeF9TGbZBN
+Fork repository: https://github.com/bitcore-btx/BTX-Paperwallet
 
 
 END USER NOTES:

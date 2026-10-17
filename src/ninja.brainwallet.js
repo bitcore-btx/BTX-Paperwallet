@@ -28,7 +28,9 @@ ninja.wallets.brainwallet = {
 				var btcKey = new Bitcoin.ECKey(bytes);
 				var isCompressed = document.getElementById("braincompressed").checked;
 				btcKey.setCompressed(isCompressed);
-				var bitcoinAddress = btcKey.getBitcoinAddress();
+				// SegWit (P2WPKH, btx1...) requires a compressed key
+				var segwit = document.getElementById("brainsegwit") != null && document.getElementById("brainsegwit").checked;
+				var bitcoinAddress = segwit ? btcKey.getBech32Address() : btcKey.getBitcoinAddress();
 				var privWif = btcKey.getBitcoinWalletImportFormat();
 				document.getElementById("brainbtcaddress").innerHTML = bitcoinAddress;
 				document.getElementById("brainbtcprivwif").innerHTML = privWif;

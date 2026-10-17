@@ -15,6 +15,30 @@
 	isStillSeeding: true,
 	seederDependentWallets: ["singlewallet", "paperwallet", "bulkwallet", "vanitywallet", "splitwallet"],
 
+	// Skip the mouse-movement seeding ritual entirely. The browser's CSPRNG
+	// (window.crypto.getRandomValues, already mixed into the pool at init by
+	// securerandom.js) is the primary entropy source; mouse movements only add
+	// supplementary entropy. Grab a final CSPRNG batch, then finish seeding.
+	skip: function () {
+		if (!ninja.seeder.isStillSeeding) return;
+		try {
+			if (window.crypto && window.crypto.getRandomValues) {
+				var ua = new Uint8Array(64);
+				window.crypto.getRandomValues(ua);
+				for (var t = 0; t < ua.length; t += 2) {
+					SecureRandom.seedInt16((ua[t] << 8) ^ ua[t + 1] ^ new Date().getTime());
+				}
+			}
+			SecureRandom.seedTime();
+		} catch (e) {
+			// CSPRNG unavailable or pool already locked: fall through and
+			// finish anyway — the init-time pool is still in use.
+		}
+		ninja.seeder.seedCount = ninja.seeder.seedLimit;
+		ninja.seeder.seedCount++;
+		ninja.seeder.seedingOver();
+	},
+
 	// seed function exists to wait for mouse movement to add more entropy before generating an address
 	seed: function (evt) {
 		if (!evt) var evt = window.event;
