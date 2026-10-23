@@ -12,6 +12,12 @@ Bitcoin.Address = function (bytes) {
 //   base58Prefixes[PUBKEY_ADDRESS] = 3, base58Prefixes[SECRET_KEY] = 128 (0x80), bech32_hrp = "btx".
 Bitcoin.Address.networkVersion = 0x03; // mainnet
 
+// P2SH script address version byte = 0x7D (125) -> base58 addresses start with 's'.
+// Confirmed against the official BitCore node (LIMXTEC/BitCore src/chainparams.cpp):
+//   base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,125); // BTX prefix 's'
+// Used for P2SH-P2WPKH "compatibility" addresses (BIP-49 style nested SegWit).
+Bitcoin.Address.scriptHashVersion = 0x7D; // mainnet
+
 // Human-readable part for native SegWit (bech32) addresses, addresses look like btx1...
 // Same source: LIMXTEC/BitCore src/chainparams.cpp (bech32_hrp = "btx") and src/key_io.cpp
 // (standard BIP-173 bech32, witness v0). Documented at https://bitcore.cc/wallets (bc1... -> btx1...).

@@ -84,6 +84,7 @@
 
 		// paper wallet html
 		"paperlabelhideart": "Enlever l'image ?",
+		"paperlabeladdresstype": "Type d'adresse :",
 		"paperlabeladdressesperpage": "Adresses par page:",
 		"paperlabeladdressestogenerate": "Nombre d'adresses à créer:",
 		"papergenerate": "Générer",

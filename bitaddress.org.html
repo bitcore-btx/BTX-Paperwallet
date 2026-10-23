@@ -5244,6 +5244,12 @@ Bitcoin.Address = function (bytes) {
 //   base58Prefixes[PUBKEY_ADDRESS] = 3, base58Prefixes[SECRET_KEY] = 128 (0x80), bech32_hrp = "btx".
 Bitcoin.Address.networkVersion = 0x03; // mainnet
 
+// P2SH script address version byte = 0x7D (125) -> base58 addresses start with 's'.
+// Confirmed against the official BitCore node (LIMXTEC/BitCore src/chainparams.cpp):
+//   base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,125); // BTX prefix 's'
+// Used for P2SH-P2WPKH "compatibility" addresses (BIP-49 style nested SegWit).
+Bitcoin.Address.scriptHashVersion = 0x7D; // mainnet
+
 // Human-readable part for native SegWit (bech32) addresses, addresses look like btx1...
 // Same source: LIMXTEC/BitCore src/chainparams.cpp (bech32_hrp = "btx") and src/key_io.cpp
 // (standard BIP-173 bech32, witness v0). Documented at https://bitcore.cc/wallets (bc1... -> btx1...).
@@ -5942,6 +5948,28 @@ Bitcoin.ECKey = (function () {
 	};
 
 	/*
+	* "Compatibility" SegWit address (P2SH-P2WPKH, BIP-49 style nested SegWit):
+	* redeemScript = OP_0 <hash160(compressed pubkey)>, address = Base58Check(0x7D + hash160(redeemScript))
+	* -> BTX addresses start with 's'. Verified against the official BitCore node
+	* (LIMXTEC/BitCore src/chainparams.cpp: base58Prefixes[SCRIPT_ADDRESS] = 125, prefix 's';
+	* key_io.cpp uses standard BIP-16 P2SH encoding). The same key can spend from this
+	* address with a witness redeemScript (BIP-141), so it is spendable by all
+	* SegWit-capable and legacy BTX wallets.
+	*/
+	ECKey.prototype.getP2SHAddress = function () {
+		var wasCompressed = this.compressed;
+		this.setCompressed(true);
+	 var pubKeyHash = this.getPubKeyHash();
+		this.setCompressed(wasCompressed);
+		// P2WPKH witness program: OP_0 (0x00) + PUSHBYTES20 (0x14) + pubkey hash
+		var redeemScript = [0x00, 0x14].concat(pubKeyHash);
+		var scriptHash = Bitcoin.Util.sha256ripe160(redeemScript);
+		var addr = new Bitcoin.Address(scriptHash);
+		addr.version = Bitcoin.Address.scriptHashVersion;
+		return addr.toString();
+	};
+
+	/*
 	* Takes a public point as a hex string or byte array
 	*/
 	ECKey.prototype.setPub = function (pub) {
@@ -6584,7 +6612,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 		                                padding: 5px 5px 2px 5px; }
 #paperarea .artwallet .btcaddress  
 {
-	position: absolute; top: 240px; left: 139px; z-index: 100; font-size: 10px; background-color: transparent;
+	position: absolute; top: 240px; left: 139px; z-index: 100; font-size: 10px; background-color: #ffffff; padding: 3px 2px;
 	font-weight:bold; color: #000000; margin: 0;
 		-webkit-transform-origin:top left; -webkit-transform:rotate(-90deg);
 		-moz-transform-origin:top left;    -moz-transform:rotate(-90deg);
@@ -6594,7 +6622,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 } 
 #paperarea .artwallet .btcprivwif  
 {
-	position: absolute; top: 236px; left: 346px; z-index: 100; font-size: 7px; background-color: transparent;
+	position: absolute; top: 236px; left: 340px; z-index: 100; font-size: 7px; background-color: #ffffff; padding: 3px 2px;
 	font-weight:bold; color: #000000; margin: 0;  
 		-webkit-transform-origin:top left; -webkit-transform:rotate(-90deg);
 		-moz-transform-origin:top left;    -moz-transform:rotate(-90deg);
@@ -6604,7 +6632,7 @@ input[type=checkbox] { position: relative; z-index: 20; }
 }
 #paperarea .artwallet .btcencryptedkey
 {
-	position: absolute; top: 174px; left: 332px; z-index: 100; font-size: 8px; background-color: transparent;
+	position: absolute; top: 174px; left: 332px; z-index: 100; font-size: 8px; background-color: #ffffff; padding: 3px 2px;
 	font-weight:bold; color: #000000; margin: 0;  
 		-webkit-transform-origin:top left; -webkit-transform:rotate(-90deg);
 		-moz-transform-origin:top left;    -moz-transform:rotate(-90deg);
@@ -6985,7 +7013,7 @@ a:hover { color: #ff9c00; }
 				<div class="commands">
 					<div id="papercommands" class="row">
 						<span><label id="paperlabelhideart" for="paperart">Hide Art?</label> <input type="checkbox" id="paperart" onchange="ninja.wallets.paperwallet.toggleArt(this);" /></span>
-						<span><label id="paperlabelsegwit" for="papersegwit">SegWit address (btx1...)?</label> <input type="checkbox" id="papersegwit" onchange="ninja.wallets.paperwallet.toggleSegwit(this);" /></span>
+						<span><label id="paperlabeladdresstype" for="paperaddresstype">Address type:</label> <select id="paperaddresstype" onchange="ninja.wallets.paperwallet.setAddressType(this);"><option value="legacy">Legacy (2...)</option><option value="segwit">SegWit (btx1...)</option><option value="p2sh">Compatibility (s...)</option></select></span>
 						<span><label id="paperlabeladdressestogenerate" for="paperlimit">Addresses to generate:</label> <input type="text" id="paperlimit" /></span>
 						<span><input type="button" id="papergenerate" value="Generate" onclick="ninja.wallets.paperwallet.build(document.getElementById('paperlimit').value * 1, document.getElementById('paperlimitperpage').value * 1, !document.getElementById('paperart').checked, document.getElementById('paperpassphrase').value);" /></span>
 						<span class="print"><input type="button" name="print" value="Print" id="paperprint" onclick="window.print();" /></span>
@@ -8483,6 +8511,7 @@ ninja.foreachSerialized = function (collection, whatToDo, onComplete) {
 
 		// paper wallet html
 		"paperlabelhideart": "Grafische Gestaltung ausblenden?",
+		"paperlabeladdresstype": "Adresstyp:",
 		"paperlabeladdressesperpage": "Adressen je Seite:",
 		"paperlabeladdressestogenerate": "Anzahl zu erstellender Adressen:",
 		"papergenerate": "Erstellen",
@@ -8815,6 +8844,7 @@ ninja.foreachSerialized = function (collection, whatToDo, onComplete) {
 
 		// paper wallet html
 		"paperlabelhideart": "Ocultar diseño",
+		"paperlabeladdresstype": "Tipo de dirección:",
 		"paperlabeladdressesperpage": "Direcciones por página:",
 		"paperlabeladdressestogenerate": "Direcciones en total:",
 		"papergenerate": "Generar",
@@ -8981,6 +9011,7 @@ ninja.foreachSerialized = function (collection, whatToDo, onComplete) {
 
 		// paper wallet html
 		"paperlabelhideart": "Enlever l'image ?",
+		"paperlabeladdresstype": "Type d'adresse :",
 		"paperlabeladdressesperpage": "Adresses par page:",
 		"paperlabeladdressestogenerate": "Nombre d'adresses à créer:",
 		"papergenerate": "Générer",
@@ -9485,6 +9516,7 @@ ninja.foreachSerialized = function (collection, whatToDo, onComplete) {
 
 		// paper wallet html
 		"paperlabelhideart": "デザイン非表示",
+		"paperlabeladdresstype": "アドレスタイプ:",
 		"paperlabeladdressesperpage": "1ページごとのアドレス数",
 		"paperlabeladdressestogenerate": "生成するアドレス数",
 		"papergenerate": "生成",
@@ -10268,7 +10300,8 @@ ninja.wallets.paperwallet = {
 		else {
 			var key = new Bitcoin.ECKey(false);
 			key.setCompressed(true);
-			var bitcoinAddress = ninja.wallets.paperwallet.segwit ? key.getBech32Address() : key.getBitcoinAddress();
+			var addressType = ninja.wallets.paperwallet.addressType;
+			var bitcoinAddress = addressType === "segwit" ? key.getBech32Address() : (addressType === "p2sh" ? key.getP2SHAddress() : key.getBitcoinAddress());
 			var privateKeyWif = key.getBitcoinWalletImportFormat();
 			if (ninja.wallets.paperwallet.useArtisticWallet) {
 				ninja.wallets.paperwallet.showArtisticWallet(idPostFix, bitcoinAddress, privateKeyWif);
@@ -10337,12 +10370,22 @@ ninja.wallets.paperwallet = {
 		return walletHtml;
 	},
 
+	// Hard-wrap a string into chunks of n chars separated by <br /> (no hyphens),
+	// used for the rotated address/key text on the artistic paper wallet.
+	wrapChars: function (text, n) {
+		var out = [];
+		for (var i = 0; i < text.length; i += n) {
+			out.push(text.substr(i, n));
+		}
+		return out.join('<br />');
+	},
+
 	showArtisticWallet: function (idPostFix, bitcoinAddress, privateKey) {
 		var keyValuePair = {};
 		keyValuePair["qrcode_public" + idPostFix] = bitcoinAddress;
 		keyValuePair["qrcode_private" + idPostFix] = privateKey;
 		ninja.qrCode.showQrCode(keyValuePair, 2.5);
-		document.getElementById("btcaddress" + idPostFix).innerHTML = bitcoinAddress;
+		document.getElementById("btcaddress" + idPostFix).innerHTML = ninja.wallets.paperwallet.wrapChars(bitcoinAddress, 17);
 
 		if (ninja.wallets.paperwallet.encrypt) {
 			var half = privateKey.length / 2;
@@ -10378,24 +10421,24 @@ ninja.wallets.paperwallet = {
 		// BIP38 encrypts to a base58 (legacy) address - the BIP38 addresshash in the
 		// encrypted key is defined over the base58 address string. SegWit paper
 		// wallets therefore cannot be BIP38-encrypted: force legacy when encrypting.
+		var typeEl = document.getElementById("paperaddresstype");
 		if (element.checked) {
-			var segwitEl = document.getElementById("papersegwit");
-			if (segwitEl != null && segwitEl.checked) {
-				segwitEl.checked = false;
-				ninja.wallets.paperwallet.segwit = false;
+			if (typeEl != null) {
+				typeEl.value = "legacy";
+				ninja.wallets.paperwallet.addressType = "legacy";
+				typeEl.disabled = true;
 			}
-			if (segwitEl != null) segwitEl.disabled = true;
-		} else if (document.getElementById("papersegwit") != null) {
-			document.getElementById("papersegwit").disabled = false;
+		} else if (typeEl != null) {
+			typeEl.disabled = false;
 		}
 		ninja.wallets.paperwallet.resetLimits();
 	},
 
-	toggleSegwit: function (element) {
-		ninja.wallets.paperwallet.segwit = element.checked;
+	setAddressType: function (element) {
+		ninja.wallets.paperwallet.addressType = element.value;
 	},
 
-	segwit: false, // when true, non-encrypted paper wallets show a btx1... (P2WPKH) address
+	addressType: "legacy", // "legacy" -> 2..., "segwit" -> btx1..., "p2sh" -> s... (compatibility nested SegWit)
 
 	resetLimits: function () {
 		var hideArt = document.getElementById("paperart");

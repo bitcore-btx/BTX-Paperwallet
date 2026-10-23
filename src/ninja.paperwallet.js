@@ -114,7 +114,8 @@ ninja.wallets.paperwallet = {
 		else {
 			var key = new Bitcoin.ECKey(false);
 			key.setCompressed(true);
-			var bitcoinAddress = ninja.wallets.paperwallet.segwit ? key.getBech32Address() : key.getBitcoinAddress();
+			var addressType = ninja.wallets.paperwallet.addressType;
+			var bitcoinAddress = addressType === "segwit" ? key.getBech32Address() : (addressType === "p2sh" ? key.getP2SHAddress() : key.getBitcoinAddress());
 			var privateKeyWif = key.getBitcoinWalletImportFormat();
 			if (ninja.wallets.paperwallet.useArtisticWallet) {
 				ninja.wallets.paperwallet.showArtisticWallet(idPostFix, bitcoinAddress, privateKeyWif);
@@ -183,12 +184,22 @@ ninja.wallets.paperwallet = {
 		return walletHtml;
 	},
 
+	// Hard-wrap a string into chunks of n chars separated by <br /> (no hyphens),
+	// used for the rotated address/key text on the artistic paper wallet.
+	wrapChars: function (text, n) {
+		var out = [];
+		for (var i = 0; i < text.length; i += n) {
+			out.push(text.substr(i, n));
+		}
+		return out.join('<br />');
+	},
+
 	showArtisticWallet: function (idPostFix, bitcoinAddress, privateKey) {
 		var keyValuePair = {};
 		keyValuePair["qrcode_public" + idPostFix] = bitcoinAddress;
 		keyValuePair["qrcode_private" + idPostFix] = privateKey;
 		ninja.qrCode.showQrCode(keyValuePair, 2.5);
-		document.getElementById("btcaddress" + idPostFix).innerHTML = bitcoinAddress;
+		document.getElementById("btcaddress" + idPostFix).innerHTML = ninja.wallets.paperwallet.wrapChars(bitcoinAddress, 17);
 
 		if (ninja.wallets.paperwallet.encrypt) {
 			var half = privateKey.length / 2;
@@ -224,24 +235,24 @@ ninja.wallets.paperwallet = {
 		// BIP38 encrypts to a base58 (legacy) address - the BIP38 addresshash in the
 		// encrypted key is defined over the base58 address string. SegWit paper
 		// wallets therefore cannot be BIP38-encrypted: force legacy when encrypting.
+		var typeEl = document.getElementById("paperaddresstype");
 		if (element.checked) {
-			var segwitEl = document.getElementById("papersegwit");
-			if (segwitEl != null && segwitEl.checked) {
-				segwitEl.checked = false;
-				ninja.wallets.paperwallet.segwit = false;
+			if (typeEl != null) {
+				typeEl.value = "legacy";
+				ninja.wallets.paperwallet.addressType = "legacy";
+				typeEl.disabled = true;
 			}
-			if (segwitEl != null) segwitEl.disabled = true;
-		} else if (document.getElementById("papersegwit") != null) {
-			document.getElementById("papersegwit").disabled = false;
+		} else if (typeEl != null) {
+			typeEl.disabled = false;
 		}
 		ninja.wallets.paperwallet.resetLimits();
 	},
 
-	toggleSegwit: function (element) {
-		ninja.wallets.paperwallet.segwit = element.checked;
+	setAddressType: function (element) {
+		ninja.wallets.paperwallet.addressType = element.value;
 	},
 
-	segwit: false, // when true, non-encrypted paper wallets show a btx1... (P2WPKH) address
+	addressType: "legacy", // "legacy" -> 2..., "segwit" -> btx1..., "p2sh" -> s... (compatibility nested SegWit)
 
 	resetLimits: function () {
 		var hideArt = document.getElementById("paperart");

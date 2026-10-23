@@ -84,6 +84,7 @@
 
 		// paper wallet html
 		"paperlabelhideart": "Ocultar diseño",
+		"paperlabeladdresstype": "Tipo de dirección:",
 		"paperlabeladdressesperpage": "Direcciones por página:",
 		"paperlabeladdressestogenerate": "Direcciones en total:",
 		"papergenerate": "Generar",

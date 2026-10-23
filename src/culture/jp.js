@@ -82,6 +82,7 @@
 
 		// paper wallet html
 		"paperlabelhideart": "デザイン非表示",
+		"paperlabeladdresstype": "アドレスタイプ:",
 		"paperlabeladdressesperpage": "1ページごとのアドレス数",
 		"paperlabeladdressestogenerate": "生成するアドレス数",
 		"papergenerate": "生成",

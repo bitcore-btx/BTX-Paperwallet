@@ -235,6 +235,28 @@ Bitcoin.ECKey = (function () {
 	};
 
 	/*
+	* "Compatibility" SegWit address (P2SH-P2WPKH, BIP-49 style nested SegWit):
+	* redeemScript = OP_0 <hash160(compressed pubkey)>, address = Base58Check(0x7D + hash160(redeemScript))
+	* -> BTX addresses start with 's'. Verified against the official BitCore node
+	* (LIMXTEC/BitCore src/chainparams.cpp: base58Prefixes[SCRIPT_ADDRESS] = 125, prefix 's';
+	* key_io.cpp uses standard BIP-16 P2SH encoding). The same key can spend from this
+	* address with a witness redeemScript (BIP-141), so it is spendable by all
+	* SegWit-capable and legacy BTX wallets.
+	*/
+	ECKey.prototype.getP2SHAddress = function () {
+		var wasCompressed = this.compressed;
+		this.setCompressed(true);
+	 var pubKeyHash = this.getPubKeyHash();
+		this.setCompressed(wasCompressed);
+		// P2WPKH witness program: OP_0 (0x00) + PUSHBYTES20 (0x14) + pubkey hash
+		var redeemScript = [0x00, 0x14].concat(pubKeyHash);
+		var scriptHash = Bitcoin.Util.sha256ripe160(redeemScript);
+		var addr = new Bitcoin.Address(scriptHash);
+		addr.version = Bitcoin.Address.scriptHashVersion;
+		return addr.toString();
+	};
+
+	/*
 	* Takes a public point as a hex string or byte array
 	*/
 	ECKey.prototype.setPub = function (pub) {

@@ -86,6 +86,7 @@
 
 		// paper wallet html
 		"paperlabelhideart": "Grafische Gestaltung ausblenden?",
+		"paperlabeladdresstype": "Adresstyp:",
 		"paperlabeladdressesperpage": "Adressen je Seite:",
 		"paperlabeladdressestogenerate": "Anzahl zu erstellender Adressen:",
 		"papergenerate": "Erstellen",
