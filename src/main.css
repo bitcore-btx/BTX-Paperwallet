@@ -306,3 +306,82 @@ a:hover { color: #ff9c00; }
 	#seedpoolarea { display: none; }
 	.faq { display: none; }
 }
+
+/* ===== BTX v4 ticket layout (paperwallet, landscape, 4 per A4) ===== */
+.btxpage { width:794px; height:1123px; background:#fff; margin:0 auto 18px; position:relative; padding:22px 24px;
+	display:flex; flex-direction:column; box-shadow:0 8px 30px rgba(0,0,0,.35); overflow:hidden;
+	--paper:#f4edde; --paper2:#eadfc6; --ink:#3a3226; --tan:#b1966a; --brown:#5f4318; --orange:#f7931a; --line:#c8b48b; --sec:#7c6440;
+	font-family:"Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); }
+.btxpage .pagehead { display:flex; justify-content:space-between; font-size:8px; color:#9a9a9a; letter-spacing:.8px; text-transform:uppercase; padding:0 2px 6px; }
+.btxpage .stack { flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+.btxpage .ticket { width:100%; height:256px; position:relative; background:var(--paper); }
+.btxpage .ticket::before, .btxpage .ticket::after { content:""; position:absolute; inset:-7px; pointer-events:none; }
+.btxpage .ticket::before {
+	background:
+		linear-gradient(#000,#000) 0 0/1px 9px, linear-gradient(#000,#000) 0 0/9px 1px,
+		linear-gradient(#000,#000) 100% 0/1px 9px, linear-gradient(#000,#000) 100% 0/9px 1px,
+		linear-gradient(#000,#000) 0 100%/1px 9px, linear-gradient(#000,#000) 0 100%/9px 1px,
+		linear-gradient(#000,#000) 100% 100%/1px 9px, linear-gradient(#000,#000) 100% 100%/9px 1px;
+	background-repeat:no-repeat; opacity:.75; }
+.btxpage .frame { position:absolute; inset:6px; border:1px solid var(--tan); border-radius:4px; }
+.btxpage .frame2 { position:absolute; inset:9px; border:.5px solid rgba(177,150,106,.55); border-radius:3px; pointer-events:none; }
+.btxpage .micro { position:absolute; top:11.5px; left:26px; right:26px; text-align:center; font-size:4.6px; letter-spacing:1.6px; color:#a08a5e; text-transform:uppercase; overflow:hidden; white-space:nowrap; }
+.btxpage .wm { position:absolute; right:118px; top:50%; transform:translateY(-54%); font-size:200px; font-weight:800; color:rgba(95,67,24,.05); line-height:1; pointer-events:none; user-select:none; }
+.btxpage .grid { position:absolute; inset:20px 14px 24px; display:grid; grid-template-columns:168px 1fr 15px 262px; gap:12px; }
+.btxpage .pub { display:flex; flex-direction:column; align-items:center; grid-column:1; padding-top:4px; }
+.btxpage .qr { width:104px; height:104px; background:#fff; border:1px solid #d8cbb0; padding:4px; border-radius:3px; }
+.btxpage .qr svg { display:block; width:100%; height:100%; }
+.btxpage .cta { margin-top:3px; font-size:10.5px; font-weight:600; color:#5c5346; letter-spacing:.4px; }
+.btxpage .addrlbl { margin-top:6px; font-size:7.5px; letter-spacing:2px; color:var(--tan); font-weight:700; }
+.btxpage .addr { margin-top:3px; font-family:"DejaVu Sans Mono","Courier New",monospace; font-size:10.5px; letter-spacing:.2px; text-align:center; line-height:1.45; background:rgba(255,255,255,.65); border:1px solid var(--line); border-radius:3px; padding:3px 6px; color:var(--ink); white-space:nowrap; }
+.btxpage .brand { display:flex; flex-direction:column; justify-content:space-between; align-items:center; text-align:center; grid-column:2; padding:2px 0; }
+.btxpage .formula { font-family:"Cambria Math","STIX Two Math",Georgia,serif; font-style:italic; font-size:8.5px; color:#8d774f; line-height:1.35; }
+.btxpage .sealwrap { display:flex; flex-direction:column; align-items:center; }
+.btxpage .seal { width:74px; height:74px; border-radius:50%; position:relative; display:flex; align-items:center; justify-content:center; margin-top:10px; background:#fff; box-shadow:0 0 0 1px #e8dcc2,0 2px 6px rgba(0,0,0,.15); }
+.btxpage .seal img { width:100%; height:100%; object-fit:cover; display:block; border-radius:50%; }
+.btxpage .seal .ring { position:absolute; left:-13px; top:-13px; width:100px; height:100px; overflow:visible; pointer-events:none; }
+.btxpage .seal .ring text { font-size:8.5px; font-weight:700; letter-spacing:1.4px; fill:#8d774f; font-family:"Segoe UI",Helvetica,Arial,sans-serif; }
+.btxpage .wordmark { font-weight:800; font-size:17px; color:var(--brown); letter-spacing:-.4px; margin-top:10px; }
+.btxpage .amount { font-size:9.5px; color:var(--brown); font-weight:700; margin-top:1px; }
+.btxpage .amount .field { display:inline-block; width:72px; border-bottom:1.2px solid var(--brown); height:12px; vertical-align:bottom; }
+.btxpage .motto { font-size:7.5px; color:var(--tan); font-style:italic; letter-spacing:.6px; }
+.btxpage .strip { grid-column:3; border-radius:2px; background:linear-gradient(var(--tan),#82683d); color:#fff; writing-mode:vertical-rl; text-orientation:mixed; font-size:7px; font-weight:700; letter-spacing:2.2px; display:flex; align-items:center; justify-content:center; }
+.btxpage .priv { grid-column:4; border:1.3px dashed #97702f; border-radius:5px; background:rgba(255,255,255,.72); padding:7px 9px; display:flex; flex-direction:column; justify-content:center; position:relative; }
+.btxpage .priv .hdr { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.btxpage .priv .hdr b { font-size:8px; letter-spacing:1.6px; color:#7c4a10; }
+.btxpage .priv .hdr i { font-size:7px; color:#a58a5c; font-style:normal; letter-spacing:.4px; }
+.btxpage .keyrow { display:grid; grid-template-columns:1fr 76px; gap:9px; align-items:center; }
+.btxpage .key { display:grid; grid-template-columns:11px 1fr; row-gap:2.5px; align-items:center; }
+.btxpage .key .n { font-size:6.5px; color:#b09a70; text-align:right; font-family:monospace; padding-right:7px; }
+.btxpage .key .g { font-family:"DejaVu Sans Mono","Courier New",monospace; font-size:12px; letter-spacing:1.1px; color:#141414; white-space:nowrap; }
+.btxpage .key .g .gap { display:inline-block; width:7px; }
+.btxpage .privqr { width:72px; height:72px; background:#fff; border:1px solid #ccc; padding:3px; border-radius:3px; }
+.btxpage .privqr svg { width:100%; height:100%; display:block; }
+.btxpage .cap { font-size:6px; color:#8a744d; text-align:center; letter-spacing:.6px; margin-top:1px; }
+.btxpage .sealnote { font-size:6.5px; color:#7c4a10; text-align:center; margin-top:5px; letter-spacing:.3px; }
+.btxpage .pairid { position:absolute; top:7px; right:9px; font-family:monospace; font-size:6.5px; color:#a58a5c; letter-spacing:.5px; }
+.btxpage .tfoot { position:absolute; bottom:12px; left:26px; right:26px; display:flex; justify-content:space-between; font-size:6px; letter-spacing:1.1px; color:#b09a70; text-transform:uppercase; }
+/* Grafiklos: gleiches Raster, schwarz auf weiss */
+.btxpage .ticket.plain { background:#fff; }
+.btxpage .ticket.plain .frame { border:1.2px solid #000; }
+.btxpage .ticket.plain .frame2, .btxpage .ticket.plain .micro, .btxpage .ticket.plain .wm, .btxpage .ticket.plain .formula,
+.btxpage .ticket.plain .seal, .btxpage .ticket.plain .motto, .btxpage .ticket.plain .cta, .btxpage .ticket.plain .strip { display:none; }
+.btxpage .ticket.plain .grid { grid-template-columns:168px 1fr 0 262px; gap:10px; }
+.btxpage .ticket.plain .wordmark { font-size:13px; letter-spacing:3px; color:#000; font-weight:700; margin-top:0; }
+.btxpage .ticket.plain .brand { justify-content:center; gap:9px; }
+.btxpage .ticket.plain .amount { font-weight:400; color:#000; border:1px solid #000; padding:4px 6px; width:140px; text-align:left; font-size:9px; }
+.btxpage .ticket.plain .addrlbl, .btxpage .ticket.plain .priv .hdr b { color:#000; }
+.btxpage .ticket.plain .addr { border-color:#000; background:#fff; }
+.btxpage .ticket.plain .priv { border:1.2px solid #000; background:#fff; }
+.btxpage .ticket.plain .sealnote, .btxpage .ticket.plain .pairid, .btxpage .ticket.plain .tfoot, .btxpage .ticket.plain .cap,
+.btxpage .ticket.plain .hdr i { color:#333; }
+@media print {
+	@page { size:A4 portrait; margin:0; }
+	#paperkeyarea { padding:0; }
+	.btxpage { box-shadow:none; margin:0; page-break-after:always; }
+	.btxpage, .btxpage * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
+/* v4: full private key as one-line microtext under the seal (copy-friendly) */
+.btxpage .ticket .fullkey{font-family:'DejaVu Sans Mono','Courier New',monospace;font-size:4.4px;line-height:1.3;letter-spacing:.02em;word-break:break-all;text-align:center;color:#4a3f2f;margin-top:3px;user-select:all;-webkit-user-select:all}
+.btxpage .ticket.plain .fullkey{color:#000;border:0}
